@@ -1,2 +1,2 @@
 # pong
-El juego
+El juego -Pong- en pygame.
