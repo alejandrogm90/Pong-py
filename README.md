@@ -3,11 +3,11 @@ Pong
 
 ![Splash](https://github.com/alejandrogm90/pong/blob/master/images/pong-screenshot.png)
 
-# Information
+# Welcome to Pong!
 
 The game -Pong- in Python using Pygame.
+- [Contact](https://github.com/alejandrogm90/) us for more information
 - Browse our Repository
-- [Contact](https://github.com/alejandrogm90/pong/) us for more information
 
 ## Bibliografy
 
