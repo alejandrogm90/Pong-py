@@ -15,8 +15,8 @@ function desktopEntry() {
 [Desktop Entry]
 Name=Pong-py
 Comment=Application for play PONG game
-Exec="/opt/Pong-py/main.py"
-Icon="/opt/Pong-py/images/ball.png"
+Exec=/opt/Pong-py/main.py
+Icon=/opt/Pong-py/images/ball.png
 Categories=Game;Application;
 Version=1.0
 Type=Application
