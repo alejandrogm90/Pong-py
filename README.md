@@ -9,6 +9,11 @@ The game -Pong- in Python using Pygame.
 - [Contact](https://github.com/alejandrogm90/) us for more information
 - Browse our Repository
 
+## Extending Pong-gy
+- Create a score part on it.
+- Create a start menu.
+- Delimitate the score neded point to win.
+
 ## Bibliografy
 
 - Visit the Pygame [Official Website](http://pygame.org/)
