@@ -1,39 +1,145 @@
-#!/bin/bash
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-dir1='/opt/Pong-py'
-link1="$HOME/Pong-py.desktop"
+# Módulos
+import sys
+import pygame
+from pygame.locals import *
 
-function error1() {
-  echo 'There was a problem during installation.'
-  if [ -f $link1 ] ; then rm $link1 ; fi
-  if [ -d $dir1 ] ; then rm -R $dir1 ; fi
-  exit $1
-}
+# Constantes
+WIDTH = 640
+HEIGHT = 480
 
-function desktopEntry() {
-  cat > $1 << __EOF__
-[Desktop Entry]
-Name=Pong-py
-Comment=Application for play PONG game
-Exec=/opt/Pong-py/main.py
-Icon=/opt/Pong-py/images/ball.png
-Categories=Game;Application;
-Version=1.0
-Type=Application
-Terminal=0
-__EOF__
-  chmod +x $1
-}
 
-echo 'Copying all files.'
-if [ -d $dir1 ] ; then error1 1 'The directory already exits' ; else mkdir $dir1 ; fi
-if [ $? == 0 ] ; then
-  cp -R images $dir1
-  cp main.py $dir1
-  chmod -R 777 "$dir1"
-  echo 'Copy done.'
-  #ln -s $dir1'/main.py' $link1
-  desktopEntry $link1
-else
-  error 2 'The directory can not be created.'
-fi
+# Clases
+# ---------------------------------------------------------------------
+
+
+class Bola(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = load_image("images/ball.png", True)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH / 2
+        self.rect.centery = HEIGHT / 2
+        self.speed = [0.5, -0.5]
+
+    def actualizar(self, time, pala_jug, pala_cpu, puntos):
+        self.rect.centerx += self.speed[0] * time
+        self.rect.centery += self.speed[1] * time
+
+        if self.rect.left <= 0:
+            puntos[1] += 1
+        if self.rect.right >= WIDTH:
+            puntos[0] += 1
+
+        if self.rect.left <= 0 or self.rect.right >= WIDTH:
+            self.speed[0] = -self.speed[0]
+            self.rect.centerx += self.speed[0] * time
+        if self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
+            self.speed[1] = -self.speed[1]
+            self.rect.centery += self.speed[1] * time
+
+        if pygame.sprite.collide_rect(self, pala_jug):
+            self.speed[0] = -self.speed[0]
+            self.rect.centerx += self.speed[0] * time
+
+        if pygame.sprite.collide_rect(self, pala_cpu):
+            self.speed[0] = -self.speed[0]
+            self.rect.centerx += self.speed[0] * time
+
+        return puntos
+
+
+class Pala(pygame.sprite.Sprite):
+    def __init__(self, x):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = load_image("images/pala.png")
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.centery = HEIGHT / 2
+        self.speed = 0.5
+
+    def mover(self, time, keys):
+        if self.rect.top >= 0:
+            if keys[K_UP]:
+                self.rect.centery -= self.speed * time
+        if self.rect.bottom <= HEIGHT:
+            if keys[K_DOWN]:
+                self.rect.centery += self.speed * time
+
+    def ia(self, time, ball):
+        if ball.speed[0] >= 0 and ball.rect.centerx >= WIDTH / 2:
+            if self.rect.centery < ball.rect.centery:
+                self.rect.centery += self.speed * time
+            if self.rect.centery > ball.rect.centery:
+                self.rect.centery -= self.speed * time
+
+# ---------------------------------------------------------------------
+
+# Funciones
+# ---------------------------------------------------------------------
+
+
+def load_image(filename, transparent=False):
+        try:
+            image = pygame.image.load(filename)
+        except pygame.error:
+                raise SystemExit
+        image = image.convert()
+        if transparent:
+                color = image.get_at((0, 0))
+                image.set_colorkey(color, RLEACCEL)
+        return image
+
+
+def texto(texto, posx, posy, color=(255, 255, 255)):
+    fuente = pygame.font.Font("images/DroidSans.ttf", 25)
+    salida = pygame.font.Font.render(fuente, texto, 1, color)
+    salida_rect = salida.get_rect()
+    salida_rect.centerx = posx
+    salida_rect.centery = posy
+    return salida, salida_rect
+
+
+def main():
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Pong")
+
+    background_image = load_image("images/fondo_pong.png")
+    bola = Bola()
+    pala_jug = Pala(30)
+    pala_cpu = Pala(WIDTH - 30)
+
+    clock = pygame.time.Clock()
+
+    puntos = [0, 0]
+
+    while True:
+        time = clock.tick(60)
+        keys = pygame.key.get_pressed()
+        for eventos in pygame.event.get():
+            if eventos.type == QUIT:
+                sys.exit(0)
+
+        puntos = bola.actualizar(time, pala_jug, pala_cpu, puntos)
+        pala_jug.mover(time, keys)
+        pala_cpu.ia(time, bola)
+
+        p_jug, p_jug_rect = texto(str(puntos[0]), WIDTH / 4, 40)
+        p_cpu, p_cpu_rect = texto(str(puntos[1]), WIDTH - WIDTH / 4, 40)
+
+        screen.blit(background_image, (0, 0))
+        screen.blit(p_jug, p_jug_rect)
+        screen.blit(p_cpu, p_cpu_rect)
+        screen.blit(bola.image, bola.rect)
+        screen.blit(pala_jug.image, pala_jug.rect)
+        screen.blit(pala_cpu.image, pala_cpu.rect)
+        pygame.display.flip()
+
+    return 0
+
+
+if __name__ == "__main__":
+    pygame.init()
+    main()
