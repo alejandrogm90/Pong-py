@@ -8,14 +8,18 @@ from pygame.locals import *
 
 # Constantes
 # ---------------------------------------------------------------------
-WIDTH = 640
-HEIGHT = 480
-puntos_ganar = 1
+formWidth = 640
+formHeight = 480
+ballSpeed = 0.5
+playerSpeed = 0.5
+computerSpeed = 0.4
+pointsToWin = 3
+lang1 = ['Play', 'Exit', 'The winner is the Player', 'The winner is the Computer', 'Welcome to Pong-py']
 
 # Funciones
 # ---------------------------------------------------------------------
 def load_image(filename, transparent=False):
-    """Funcion que devuelve un objeto de tipo imagen."""
+    """Function to reurn a image object."""
     try:
         image = pygame.image.load(filename)
     except pygame.error:
@@ -26,10 +30,10 @@ def load_image(filename, transparent=False):
         image.set_colorkey(color, RLEACCEL)
     return image
 
-def texto(texto, posx, posy, color=(255, 255, 255)):
-    """Funcion que se encarga de consrtuir un texto."""
+def fText(text1, posx, posy, color=(255, 255, 255)):
+    """Manage text box in pygame."""
     fuente = pygame.font.Font("images/DroidSans.ttf", 25)
-    salida = pygame.font.Font.render(fuente, texto, 1, color)
+    salida = pygame.font.Font.render(fuente, text1, 1, color)
     salida_rect = salida.get_rect()
     salida_rect.centerx = posx
     salida_rect.centery = posy
@@ -37,79 +41,78 @@ def texto(texto, posx, posy, color=(255, 255, 255)):
 
 # Clases
 # ---------------------------------------------------------------------
-class Bola(pygame.sprite.Sprite):
-    """Clase encargada de gestinar la bola."""
+class Ball(pygame.sprite.Sprite):
+    """Class to control the Ball."""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image("images/ball.png", True)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH / 2
-        self.rect.centery = HEIGHT / 2
-        self.speed = [0.5, -0.5]
+        self.rect.centerx = formWidth / 2
+        self.rect.centery = formHeight / 2
+        self.speed = [ballSpeed, (ballSpeed * -1)]
 
-    def actualizar(self, time, pala_jug, pala_cpu, puntos):
-        """Movimiento de la Pelota."""
+    def updateBallStatus(self, time, Shovel_jug, Shovel_cpu, puntos):
+        """Manage ball's movement."""
         self.rect.centerx += self.speed[0] * time
         self.rect.centery += self.speed[1] * time
         if self.rect.left <= 0:
             puntos[1] += 1
-        if self.rect.right >= WIDTH:
+        if self.rect.right >= formWidth:
             puntos[0] += 1
-        if self.rect.left <= 0 or self.rect.right >= WIDTH:
+        if self.rect.left <= 0 or self.rect.right >= formWidth:
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
-        if self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
+        if self.rect.top <= 0 or self.rect.bottom >= formHeight:
             self.speed[1] = -self.speed[1]
             self.rect.centery += self.speed[1] * time
-        if pygame.sprite.collide_rect(self, pala_jug):
+        if pygame.sprite.collide_rect(self, Shovel_jug):
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
-        if pygame.sprite.collide_rect(self, pala_cpu):
+        if pygame.sprite.collide_rect(self, Shovel_cpu):
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
         return puntos
 
-class Pala(pygame.sprite.Sprite):
-    """Clase encargada de gestinar la bola."""
+class Shovel(pygame.sprite.Sprite):
+    """Class to control the shovel."""
 
     def __init__(self, pos_x):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("images/pala.png")
+        self.image = load_image("images/shovel.png")
         self.rect = self.image.get_rect()
         self.rect.centerx = pos_x
-        self.rect.centery = HEIGHT / 2
-        self.speed = 0.5
+        self.rect.centery = formHeight / 2
 
-    def moverJugador(self, time, keys):
-        """Movimiento del jugador."""
+    def payerMove(self, time, keys):
+        """Manage player's movement."""
         if self.rect.top >= 0:
             if keys[K_UP]:
-                self.rect.centery -= self.speed * time
-        if self.rect.bottom <= HEIGHT:
+                self.rect.centery -= playerSpeed * time
+        if self.rect.bottom <= formHeight:
             if keys[K_DOWN]:
-                self.rect.centery += self.speed * time
+                self.rect.centery += playerSpeed * time
 
-    def moverIA(self, time, ball):
-        """Movimiento de la IA."""
-        if ball.speed[0] >= 0 and ball.rect.centerx >= WIDTH/2:
+    def aiMove(self, time, ball):
+        """Manage AI's movement."""
+        if ball.speed[0] >= 0 and ball.rect.centerx >= formWidth/2:
             if self.rect.centery < ball.rect.centery:
-                self.rect.centery += self.speed * time
+                self.rect.centery += computerSpeed * time
             if self.rect.centery > ball.rect.centery:
-                self.rect.centery -= self.speed * time
+                self.rect.centery -= computerSpeed * time
 
-class Flecha(pygame.sprite.Sprite):
-    """Clase encargada de gestinar la Flecha."""
+class Arrow(pygame.sprite.Sprite):
+    """Class to control the arrow."""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("images/flecha.png")
+        self.image = load_image("images/arrow.png")
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH / 3
+        self.rect.centerx = formWidth / 3
         self.rect.centery = 200
 
-    def moverFlecha(self, time, keys):
-        """Movimiento del jugador."""
+    def arrowMove(self, time, keys):
+        """Manage Player."""
         salida = 0
         if self.rect.centery != 200:
             if keys[K_UP]:
@@ -125,22 +128,22 @@ class Flecha(pygame.sprite.Sprite):
                 salida = 1
         return salida
 
-class Partida(pygame.sprite.Sprite):
-    """Clase para controlar la partida."""
+class Game(pygame.sprite.Sprite):
+    """Class to control the game."""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         pygame.display.set_caption("Pong")
         self.clock = pygame.time.Clock()
         self.puntos = [0, 0]
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.background_image = load_image("images/fondo_pong.png")
-        self.bola = Bola()
-        self.pala_jug = Pala(30)
-        self.pala_cpu = Pala(WIDTH - 30)
+        self.screen = pygame.display.set_mode((formWidth, formHeight))
+        self.background_image = load_image("images/backgroundGame.png")
+        self.Ball = Ball()
+        self.Shovel_jug = Shovel(30)
+        self.Shovel_cpu = Shovel(formWidth - 30)
 
-    def comenzar(self):
-        """Gestiona el mobimiento."""
+    def start(self):
+        """Manage a game."""
         self.puntos = [0, 0] # Para cuando se vuelve a jugar
         while True:
             time = self.clock.tick(60)
@@ -149,27 +152,27 @@ class Partida(pygame.sprite.Sprite):
                 if eventos.type == QUIT:
                     sys.exit(0)
 
-            self.puntos = self.bola.actualizar(time, self.pala_jug, self.pala_cpu, self.puntos)
-            self.pala_jug.moverJugador(time, keys)
-            self.pala_cpu.moverIA(time, self.bola)
+            self.puntos = self.Ball.updateBallStatus(time, self.Shovel_jug, self.Shovel_cpu, self.puntos)
+            self.Shovel_jug.payerMove(time, keys)
+            self.Shovel_cpu.aiMove(time, self.Ball)
 
-            texo_jug = texto(str(self.puntos[0]), WIDTH/4, 40)
-            texo_cpu = texto(str(self.puntos[1]), WIDTH-(WIDTH/4), 40)
+            texo_jug = fText(str(self.puntos[0]), formWidth/4, 40)
+            texo_cpu = fText(str(self.puntos[1]), formWidth-(formWidth/4), 40)
 
             self.screen.blit(self.background_image, (0, 0))
             self.screen.blit(texo_jug[0], texo_jug[1])
             self.screen.blit(texo_cpu[0], texo_cpu[1])
-            self.screen.blit(self.bola.image, self.bola.rect)
-            self.screen.blit(self.pala_jug.image, self.pala_jug.rect)
-            self.screen.blit(self.pala_cpu.image, self.pala_cpu.rect)
+            self.screen.blit(self.Ball.image, self.Ball.rect)
+            self.screen.blit(self.Shovel_jug.image, self.Shovel_jug.rect)
+            self.screen.blit(self.Shovel_cpu.image, self.Shovel_cpu.rect)
             pygame.display.flip()
-            if self.puntos[0] >= puntos_ganar or self.puntos[1] >= puntos_ganar:
+            if self.puntos[0] >= pointsToWin or self.puntos[1] >= pointsToWin:
                 break
 
     def menu(self):
-        """Gestiona las eleciones del jugador al terminar la partida."""
-        image_ganar = load_image("images/fondo_ganar.png")
-        flecha = Flecha()
+        """Manage main menu."""
+        image_ganar = load_image("images/menu.png")
+        arrow1 = Arrow()
         while True:
             time = self.clock.tick(60)
             keys = pygame.key.get_pressed()
@@ -177,37 +180,31 @@ class Partida(pygame.sprite.Sprite):
                 if eventos.type == QUIT:
                     sys.exit(0)
 
-            salida_flecha = flecha.moverFlecha(time, keys)
-            t1 = texto("Jugar", WIDTH/2, 200)
-            t2 = texto("Salir", WIDTH/2, 300)
-            if self.puntos[0] >= puntos_ganar:
-                t3 = texto("El ganador es el jugador", WIDTH/2, 100)
-            elif self.puntos[0] >= puntos_ganar:
-                t3 = texto("El ganador es el ordenador", WIDTH/2, 100)
+            arrowReturn = arrow1.arrowMove(time, keys)
+            t1 = fText(lang1[0], formWidth/2, 200)
+            t2 = fText(lang1[1], formWidth/2, 300)
+            if self.puntos[0] >= pointsToWin:
+                t3 = fText(lang1[2], formWidth/2, 100)
+            elif self.puntos[1] >= pointsToWin:
+                t3 = fText(lang1[3], formWidth/2, 100)
             else:
-                t3 = texto("Bienvenido a pong-py", WIDTH/2, 100)
+                t3 = fText(lang1[4], formWidth/2, 100)
             self.screen.blit(image_ganar, (0, 0))
             self.screen.blit(t1[0], t1[1])
             self.screen.blit(t2[0], t2[1])
             self.screen.blit(t3[0], t3[1])
-            self.screen.blit(flecha.image, flecha.rect)
+            self.screen.blit(arrow1.image, arrow1.rect)
             pygame.display.flip()
-            if salida_flecha == 1:
+            if arrowReturn == 1:
                 break;
 
 # MAIN
 # ---------------------------------------------------------------------
-
-def main():
-    pygame.display.set_caption("Pong-py")
-    par1 = Partida()
-
-    while True:
-        par1.menu()
-        par1.comenzar()
-
-    return 0
-
 if __name__ == "__main__":
     pygame.init()
-    main()
+    pygame.display.set_caption("Pong-py")
+    g1 = Game()
+
+    while True:
+        g1.menu()
+        g1.start()
