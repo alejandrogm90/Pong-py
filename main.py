@@ -105,7 +105,7 @@ class Flecha(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image("images/flecha.png")
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH / 4
+        self.rect.centerx = WIDTH / 3
         self.rect.centery = 200
 
     def moverFlecha(self, time, keys):
@@ -166,7 +166,7 @@ class Partida(pygame.sprite.Sprite):
             if self.puntos[0] >= puntos_ganar or self.puntos[1] >= puntos_ganar:
                 break
 
-    def ganar(self):
+    def menu(self):
         """Gestiona las eleciones del jugador al terminar la partida."""
         image_ganar = load_image("images/fondo_ganar.png")
         flecha = Flecha()
@@ -178,12 +178,14 @@ class Partida(pygame.sprite.Sprite):
                     sys.exit(0)
 
             salida_flecha = flecha.moverFlecha(time, keys)
-            t1 = texto("Jugar de nuevo", WIDTH/2, 200)
+            t1 = texto("Jugar", WIDTH/2, 200)
             t2 = texto("Salir", WIDTH/2, 300)
             if self.puntos[0] >= puntos_ganar:
                 t3 = texto("El ganador es el jugador", WIDTH/2, 100)
-            else:
+            elif self.puntos[0] >= puntos_ganar:
                 t3 = texto("El ganador es el ordenador", WIDTH/2, 100)
+            else:
+                t3 = texto("Bienvenido a pong-py", WIDTH/2, 100)
             self.screen.blit(image_ganar, (0, 0))
             self.screen.blit(t1[0], t1[1])
             self.screen.blit(t2[0], t2[1])
@@ -201,8 +203,8 @@ def main():
     par1 = Partida()
 
     while True:
+        par1.menu()
         par1.comenzar()
-        par1.ganar()
 
     return 0
 
