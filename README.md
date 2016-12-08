@@ -30,4 +30,4 @@ A massive shoutout to our contributors on Github!
 
 ## License
 
-* GNU V3 (see `license.txt` for details)
+* GNU V3 (see `LICENSE` for details)
