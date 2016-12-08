@@ -118,10 +118,10 @@ class Flecha(pygame.sprite.Sprite):
             if keys[K_DOWN]:
                 self.rect.centery = 300
         if self.rect.centery == 300:
-            if keys[K_SPACE]:
+            if keys[K_RETURN]:
                 raise SystemExit
         if self.rect.centery == 200:
-            if keys[K_SPACE]:
+            if keys[K_RETURN]:
                 salida = 1
         return salida
 
