@@ -24,7 +24,7 @@ The game -Pong- in Python using Pygame.
 A massive shoutout to our contributors on Github!
 
 - Alejandro Gómez @alejandrogm90
-
+- psicobyte @psicobyte
 
 *Pong-py also uses code from a number of open source projects. Effort has been made to clearly identify authors in the code comments. If you notice and missing or incorrect attribution please let us know.*
 
