@@ -18,6 +18,7 @@ The game -Pong- in Python using Pygame.
 
 - Visit the Pygame [Official Website](http://pygame.org/)
 - The -Pong- [Official Project] (http://pygame.org/project-Pygame+SGE-2865-5021.html)
+- The -Pong- [Other Project] (https://github.com/alejandrogm90/Pong-py3) version for Python 3.
 
 ## Community
 
