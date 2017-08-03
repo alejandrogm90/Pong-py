@@ -14,6 +14,22 @@ The game -Pong- in Python using Pygame.
 - Create a start menu.
 - Delimitate the score neded point to win.
 
+## Prerequisites ##
+In order to run this script the following needs to be installed:
+
+### Windows ###
+ - python3 or higher: __https://www.python.org/downloads/__
+
+### Linux ###
+ - python3 or higher: __sudo apt-get install python python-dev__
+ - pip: __sudo apt-get install python-pip__
+
+### Both ###
+You may also run into an issue with installing package requirements:
+
+__pip install -r requirements.txt__
+
+
 ## Bibliografy
 
 - Visit the Pygame [Official Website](http://pygame.org/)
