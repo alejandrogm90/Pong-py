@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-#
 #
 #       Copyright 2016 Alejandro Gomez
 #
@@ -28,7 +26,7 @@ from pygame.locals import *
 # ---------------------------------------------------------------------
 formWidth = 640
 formHeight = 480
-ballSpeed = 0.5
+ballSpeed = 0.1
 playerSpeed = 0.5
 computerSpeed = 0.4
 pointsToWin = 3
@@ -216,8 +214,7 @@ class Game(pygame.sprite.Sprite):
             if arrowReturn == 1:
                 break;
 
-# MAIN
-# ---------------------------------------------------------------------
+
 if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption("Pong-py")

@@ -1,7 +1,14 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
 Pong-py
 ========
 
-![Splash](https://github.com/alejandrogm90/Pong-py/blob/master/images/pong-screenshot.png)
+![Splash][screenshot]
 
 # Welcome to Pong-py!
 
@@ -48,3 +55,27 @@ A massive shoutout to our contributors on Github!
 ## License
 
 * GNU V3 (see `LICENSE` for details)
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[screenshot]: images/pong-screenshot.png
+
+[bash-shield]: https://img.shields.io/badge/bash-000000?style=for-the-badge&logo=gnubash&logoColor=white
+[bash-url]: https://www.gnu.org/software/bash/
+[python-shield]: https://img.shields.io/badge/python-000000?style=for-the-badge&logo=python&logoColor=white
+[python-url]: https://www.python.org/
+[django-shield]: https://img.shields.io/badge/django-000000?style=for-the-badge&logo=django&logoColor=white
+[django-url]: https://www.djangoproject.com/
+
+[contributors-shield]: https://img.shields.io/github/contributors/alejandrogm90/Pong-py.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/alejandrogm90/Pong-py.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/alejandrogm90/Pong-py.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/alejandrogm90/Pong-py.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/alejandrogm90/Pong-py.svg?style=for-the-badge
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+
+[contributors-url]: https://github.com/alejandrogm90/Pong-py/graphs/contributors
+[forks-url]: https://github.com/alejandrogm90/Pong-py/network/members
+[stars-url]: https://github.com/alejandrogm90/Pong-py/stargazers
+[issues-url]: https://github.com/alejandrogm90/Pong-py/issues
+[license-url]: https://github.com/alejandrogm90/Pong-py/blob/master/LICENSE.txt
+[linkedin-url]: https://www.linkedin.com/in/alejandro-g-762869129/
