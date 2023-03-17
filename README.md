@@ -1,3 +1,4 @@
+[![Version][version-shield]][version-url]
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -66,6 +67,7 @@ A massive shoutout to our contributors on Github!
 [django-shield]: https://img.shields.io/badge/django-000000?style=for-the-badge&logo=django&logoColor=white
 [django-url]: https://www.djangoproject.com/
 
+[version-shield]: https://img.shields.io/badge/version-1.0-blue?style=for-the-badge
 [contributors-shield]: https://img.shields.io/github/contributors/alejandrogm90/Pong-py.svg?style=for-the-badge
 [forks-shield]: https://img.shields.io/github/forks/alejandrogm90/Pong-py.svg?style=for-the-badge
 [stars-shield]: https://img.shields.io/github/stars/alejandrogm90/Pong-py.svg?style=for-the-badge
@@ -73,6 +75,7 @@ A massive shoutout to our contributors on Github!
 [license-shield]: https://img.shields.io/github/license/alejandrogm90/Pong-py.svg?style=for-the-badge
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 
+[version-url]: https://www.linkedin.com/in/alejandro-g-762869129/
 [contributors-url]: https://github.com/alejandrogm90/Pong-py/graphs/contributors
 [forks-url]: https://github.com/alejandrogm90/Pong-py/network/members
 [stars-url]: https://github.com/alejandrogm90/Pong-py/stargazers

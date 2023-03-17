@@ -1,0 +1,15 @@
+{
+    "formWidth" : 640,
+    "formHeight" : 480,
+    "ballSpeed" : 0.5,
+    "playerSpeed" : 0.5,
+    "computerSpeed" : 0.4,
+    "pointsToWin" : 3,
+    "lang" : {
+        "text_play" : "Play", 
+        "text_exit" : "Exit", 
+        "text_win" : "The winner is the Player", 
+        "text_lose" : "The winner is the Computer", 
+        "text_welcome" : "Welcome to Pong-py"
+    }
+}

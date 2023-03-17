@@ -19,18 +19,25 @@
 # Módulos
 # ---------------------------------------------------------------------
 import sys
+import json
 import pygame
 from pygame.locals import *
 
 # Constantes
 # ---------------------------------------------------------------------
-formWidth = 640
-formHeight = 480
-ballSpeed = 0.1
-playerSpeed = 0.5
-computerSpeed = 0.4
-pointsToWin = 3
-lang1 = ['Play', 'Exit', 'The winner is the Player', 'The winner is the Computer', 'Welcome to Pong-py']
+CONFIG = json.load(open('config2.json'))
+formWidth = CONFIG["formWidth"]
+formHeight = CONFIG["formHeight"]
+ballSpeed = CONFIG["ballSpeed"]
+playerSpeed = CONFIG["playerSpeed"]
+computerSpeed = CONFIG["computerSpeed"]
+pointsToWin = CONFIG["pointsToWin"]
+lang1 = list()
+lang1.append(str(CONFIG["lang"]["text_play"]))
+lang1.append(str(CONFIG["lang"]["text_exit"]))
+lang1.append(str(CONFIG["lang"]["text_win"]))
+lang1.append(str(CONFIG["lang"]["text_lose"]))
+lang1.append(str(CONFIG["lang"]["text_welcome"]))
 
 # Funciones
 # ---------------------------------------------------------------------
@@ -213,7 +220,6 @@ class Game(pygame.sprite.Sprite):
             pygame.display.flip()
             if arrowReturn == 1:
                 break;
-
 
 if __name__ == "__main__":
     pygame.init()
