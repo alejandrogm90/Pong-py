@@ -37,12 +37,17 @@ You may also run into an issue with installing package requirements:
 
 __pip install -r requirements.txt__
 
+<!-- 
+pip freeze > requirements.txt 
+pipreqs --force
+-->
 
 ## Bibliografy
 
 - Visit the Pygame [Official Website](http://pygame.org/)
 - The -Pong- [Official Project](http://pygame.org/project-Pygame+SGE-2865-5021.html)
 - The -Pong- [Other Project](https://github.com/alejandrogm90/Pong-py3) version for Python 3.
+- For python requirements: [requirements](https://betterdatascience.com/python-pipreqs/)
 
 ## Community
 
@@ -58,7 +63,7 @@ A massive shoutout to our contributors on Github!
 * GNU V3 (see `LICENSE` for details)
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[screenshot]: images/pong-screenshot.png
+[screenshot]: https://github.com/alejandrogm90/Pong-py/img/pong-screenshot.png
 
 [bash-shield]: https://img.shields.io/badge/bash-000000?style=for-the-badge&logo=gnubash&logoColor=white
 [bash-url]: https://www.gnu.org/software/bash/

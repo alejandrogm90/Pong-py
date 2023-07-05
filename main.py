@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 #
 #       Copyright 2016 Alejandro Gomez
 #
@@ -25,7 +24,7 @@ from pygame.locals import *
 
 # Constantes
 # ---------------------------------------------------------------------
-CONFIG = json.load(open('config2.json'))
+CONFIG = json.load(open('config.json'))
 formWidth = CONFIG["formWidth"]
 formHeight = CONFIG["formHeight"]
 ballSpeed = CONFIG["ballSpeed"]
@@ -39,28 +38,30 @@ lang1.append(str(CONFIG["lang"]["text_win"]))
 lang1.append(str(CONFIG["lang"]["text_lose"]))
 lang1.append(str(CONFIG["lang"]["text_welcome"]))
 
+
 # Funciones
 # ---------------------------------------------------------------------
-def load_image(filename, transparent=False):
-    """Function to reurn a image object."""
+def get_image(filename, transparent=False):
+    """Function to returns the image object."""
     try:
-        image = pygame.image.load(filename)
+        image = pygame.image.load(filename).convert()
     except pygame.error:
         raise SystemExit
-    image = image.convert()
     if transparent:
         color = image.get_at((0, 0))
         image.set_colorkey(color, RLEACCEL)
     return image
 
-def fText(text1, posx, posy, color=(255, 255, 255)):
+
+def get_text(text1, posx, posy, color=(255, 255, 255)):
     """Manage text box in pygame."""
-    fuente = pygame.font.Font("images/DroidSans.ttf", 25)
-    salida = pygame.font.Font.render(fuente, text1, 1, color)
-    salida_rect = salida.get_rect()
-    salida_rect.centerx = posx
-    salida_rect.centery = posy
-    return salida, salida_rect
+    my_font = pygame.font.Font("font/DroidSans.ttf", 25)
+    output_text = my_font.render(text1, True, color)
+    text_pos = output_text.get_rect()
+    text_pos.centerx = posx
+    text_pos.centery = posy
+    return output_text, text_pos
+
 
 # Clases
 # ---------------------------------------------------------------------
@@ -69,45 +70,46 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("images/ball.png", True)
+        self.image = get_image("img/ball.png", True)
         self.rect = self.image.get_rect()
         self.rect.centerx = formWidth / 2
         self.rect.centery = formHeight / 2
         self.speed = [ballSpeed, (ballSpeed * -1)]
 
-    def updateBallStatus(self, time, Shovel_jug, Shovel_cpu, puntos):
+    def update_ball_status(self, time, player_shovel, ai_shovel, points):
         """Manage ball's movement."""
         self.rect.centerx += self.speed[0] * time
         self.rect.centery += self.speed[1] * time
         if self.rect.left <= 0:
-            puntos[1] += 1
+            points[1] += 1
         if self.rect.right >= formWidth:
-            puntos[0] += 1
+            points[0] += 1
         if self.rect.left <= 0 or self.rect.right >= formWidth:
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
         if self.rect.top <= 0 or self.rect.bottom >= formHeight:
             self.speed[1] = -self.speed[1]
             self.rect.centery += self.speed[1] * time
-        if pygame.sprite.collide_rect(self, Shovel_jug):
+        if pygame.sprite.collide_rect(self, player_shovel):
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
-        if pygame.sprite.collide_rect(self, Shovel_cpu):
+        if pygame.sprite.collide_rect(self, ai_shovel):
             self.speed[0] = -self.speed[0]
             self.rect.centerx += self.speed[0] * time
-        return puntos
+        return points
+
 
 class Shovel(pygame.sprite.Sprite):
     """Class to control the shovel."""
 
     def __init__(self, pos_x):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("images/shovel.png")
+        self.image = get_image("img/shovel.png")
         self.rect = self.image.get_rect()
         self.rect.centerx = pos_x
         self.rect.centery = formHeight / 2
 
-    def payerMove(self, time, keys):
+    def payer_move(self, time, keys):
         """Manage player's movement."""
         if self.rect.top >= 0:
             if keys[K_UP]:
@@ -116,27 +118,28 @@ class Shovel(pygame.sprite.Sprite):
             if keys[K_DOWN]:
                 self.rect.centery += playerSpeed * time
 
-    def aiMove(self, time, ball):
+    def ai_move(self, time, ball):
         """Manage AI's movement."""
-        if ball.speed[0] >= 0 and ball.rect.centerx >= formWidth/2:
+        if ball.speed[0] >= 0 and ball.rect.centerx >= formWidth / 2:
             if self.rect.centery < ball.rect.centery:
                 self.rect.centery += computerSpeed * time
             if self.rect.centery > ball.rect.centery:
                 self.rect.centery -= computerSpeed * time
+
 
 class Arrow(pygame.sprite.Sprite):
     """Class to control the arrow."""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("images/arrow.png")
+        self.image = get_image("img/arrow.png")
         self.rect = self.image.get_rect()
         self.rect.centerx = formWidth / 3
         self.rect.centery = 200
 
-    def arrowMove(self, time, keys):
+    def arrow_move(self, time, keys):
         """Manage Player."""
-        salida = 0
+        arrow_movement = 0
         if self.rect.centery != 200:
             if keys[K_UP]:
                 self.rect.centery = 200
@@ -148,8 +151,9 @@ class Arrow(pygame.sprite.Sprite):
                 raise SystemExit
         if self.rect.centery == 200:
             if keys[K_RETURN]:
-                salida = 1
-        return salida
+                arrow_movement = 1
+        return arrow_movement
+
 
 class Game(pygame.sprite.Sprite):
     """Class to control the game."""
@@ -158,68 +162,69 @@ class Game(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         pygame.display.set_caption("Pong")
         self.clock = pygame.time.Clock()
-        self.puntos = [0, 0]
+        self.points = [0, 0]
         self.screen = pygame.display.set_mode((formWidth, formHeight))
-        self.background_image = load_image("images/backgroundGame.png")
+        self.background_image = get_image("img/backgroundGame.png")
         self.Ball = Ball()
-        self.Shovel_jug = Shovel(30)
-        self.Shovel_cpu = Shovel(formWidth - 30)
+        self.player_shovel = Shovel(30)
+        self.ai_shovel = Shovel(formWidth - 30)
 
     def start(self):
         """Manage a game."""
-        self.puntos = [0, 0] # Para cuando se vuelve a jugar
+        self.points = [0, 0]
         while True:
             time = self.clock.tick(60)
             keys = pygame.key.get_pressed()
-            for eventos in pygame.event.get():
-                if eventos.type == QUIT:
+            for event in pygame.event.get():
+                if event.type == QUIT:
                     sys.exit(0)
 
-            self.puntos = self.Ball.updateBallStatus(time, self.Shovel_jug, self.Shovel_cpu, self.puntos)
-            self.Shovel_jug.payerMove(time, keys)
-            self.Shovel_cpu.aiMove(time, self.Ball)
+            self.points = self.Ball.update_ball_status(time, self.player_shovel, self.ai_shovel, self.points)
+            self.player_shovel.payer_move(time, keys)
+            self.ai_shovel.ai_move(time, self.Ball)
 
-            texo_jug = fText(str(self.puntos[0]), formWidth/4, 40)
-            texo_cpu = fText(str(self.puntos[1]), formWidth-(formWidth/4), 40)
+            texo_jug = get_text(str(self.points[0]), formWidth / 4, 40)
+            texo_cpu = get_text(str(self.points[1]), formWidth - (formWidth / 4), 40)
 
             self.screen.blit(self.background_image, (0, 0))
             self.screen.blit(texo_jug[0], texo_jug[1])
             self.screen.blit(texo_cpu[0], texo_cpu[1])
             self.screen.blit(self.Ball.image, self.Ball.rect)
-            self.screen.blit(self.Shovel_jug.image, self.Shovel_jug.rect)
-            self.screen.blit(self.Shovel_cpu.image, self.Shovel_cpu.rect)
+            self.screen.blit(self.player_shovel.image, self.player_shovel.rect)
+            self.screen.blit(self.ai_shovel.image, self.ai_shovel.rect)
             pygame.display.flip()
-            if self.puntos[0] >= pointsToWin or self.puntos[1] >= pointsToWin:
+            if self.points[0] >= pointsToWin or self.points[1] >= pointsToWin:
                 break
 
     def menu(self):
         """Manage main menu."""
-        image_ganar = load_image("images/menu.png")
+        win_image = get_image("img/menu.png")
         arrow1 = Arrow()
         while True:
             time = self.clock.tick(60)
             keys = pygame.key.get_pressed()
-            for eventos in pygame.event.get():
-                if eventos.type == QUIT:
+            for event in pygame.event.get():
+                if event.type == QUIT:
                     sys.exit(0)
 
-            arrowReturn = arrow1.arrowMove(time, keys)
-            t1 = fText(lang1[0], formWidth/2, 200)
-            t2 = fText(lang1[1], formWidth/2, 300)
-            if self.puntos[0] >= pointsToWin:
-                t3 = fText(lang1[2], formWidth/2, 100)
-            elif self.puntos[1] >= pointsToWin:
-                t3 = fText(lang1[3], formWidth/2, 100)
+            arrow_movement = arrow1.arrow_move(time, keys)
+            t1 = get_text(lang1[0], formWidth / 2, 200)
+            t2 = get_text(lang1[1], formWidth / 2, 300)
+            if self.points[0] >= pointsToWin:
+                t3 = get_text(lang1[2], formWidth / 2, 100)
+            elif self.points[1] >= pointsToWin:
+                t3 = get_text(lang1[3], formWidth / 2, 100)
             else:
-                t3 = fText(lang1[4], formWidth/2, 100)
-            self.screen.blit(image_ganar, (0, 0))
+                t3 = get_text(lang1[4], formWidth / 2, 100)
+            self.screen.blit(win_image, (0, 0))
             self.screen.blit(t1[0], t1[1])
             self.screen.blit(t2[0], t2[1])
             self.screen.blit(t3[0], t3[1])
             self.screen.blit(arrow1.image, arrow1.rect)
             pygame.display.flip()
-            if arrowReturn == 1:
-                break;
+            if arrow_movement == 1:
+                break
+
 
 if __name__ == "__main__":
     pygame.init()
