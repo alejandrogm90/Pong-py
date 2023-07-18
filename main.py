@@ -15,15 +15,11 @@
 #       You should have received a copy of the GNU General Public License
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Módulos
-# ---------------------------------------------------------------------
 import sys
 import json
 import pygame
 from pygame.locals import *
 
-# Constantes
-# ---------------------------------------------------------------------
 CONFIG = json.load(open('config.json'))
 formWidth = CONFIG["formWidth"]
 formHeight = CONFIG["formHeight"]
@@ -31,16 +27,8 @@ ballSpeed = CONFIG["ballSpeed"]
 playerSpeed = CONFIG["playerSpeed"]
 computerSpeed = CONFIG["computerSpeed"]
 pointsToWin = CONFIG["pointsToWin"]
-lang1 = list()
-lang1.append(str(CONFIG["lang"]["text_play"]))
-lang1.append(str(CONFIG["lang"]["text_exit"]))
-lang1.append(str(CONFIG["lang"]["text_win"]))
-lang1.append(str(CONFIG["lang"]["text_lose"]))
-lang1.append(str(CONFIG["lang"]["text_welcome"]))
 
 
-# Funciones
-# ---------------------------------------------------------------------
 def get_image(filename, transparent=False):
     """Function to returns the image object."""
     try:
@@ -53,18 +41,16 @@ def get_image(filename, transparent=False):
     return image
 
 
-def get_text(text1, posx, posy, color=(255, 255, 255)):
+def get_text(text1, pos_x, pos_y, color=(255, 255, 255)):
     """Manage text box in pygame."""
     my_font = pygame.font.Font("font/DroidSans.ttf", 25)
     output_text = my_font.render(text1, True, color)
     text_pos = output_text.get_rect()
-    text_pos.centerx = posx
-    text_pos.centery = posy
+    text_pos.centerx = pos_x
+    text_pos.centery = pos_y
     return output_text, text_pos
 
 
-# Clases
-# ---------------------------------------------------------------------
 class Ball(pygame.sprite.Sprite):
     """Class to control the Ball."""
 
@@ -137,7 +123,7 @@ class Arrow(pygame.sprite.Sprite):
         self.rect.centerx = formWidth / 3
         self.rect.centery = 200
 
-    def arrow_move(self, time, keys):
+    def arrow_move(self, keys):
         """Manage Player."""
         arrow_movement = 0
         if self.rect.centery != 200:
@@ -165,9 +151,12 @@ class Game(pygame.sprite.Sprite):
         self.points = [0, 0]
         self.screen = pygame.display.set_mode((formWidth, formHeight))
         self.background_image = get_image("img/backgroundGame.png")
-        self.Ball = Ball()
+        self.game_ball = Ball()
         self.player_shovel = Shovel(30)
         self.ai_shovel = Shovel(formWidth - 30)
+        self.HALF_FROM_WIDTH = formWidth / 2
+        self.PLAYER_TEXT_POSITION = formWidth / 4
+        self.AI_TEXT_POSITION = formWidth - self.PLAYER_TEXT_POSITION
 
     def start(self):
         """Manage a game."""
@@ -179,19 +168,20 @@ class Game(pygame.sprite.Sprite):
                 if event.type == QUIT:
                     sys.exit(0)
 
-            self.points = self.Ball.update_ball_status(time, self.player_shovel, self.ai_shovel, self.points)
+            self.points = self.game_ball.update_ball_status(time, self.player_shovel, self.ai_shovel, self.points)
             self.player_shovel.payer_move(time, keys)
-            self.ai_shovel.ai_move(time, self.Ball)
+            self.ai_shovel.ai_move(time, self.game_ball)
 
-            texo_jug = get_text(str(self.points[0]), formWidth / 4, 40)
-            texo_cpu = get_text(str(self.points[1]), formWidth - (formWidth / 4), 40)
+            texo_jug = get_text(str(self.points[0]), self.PLAYER_TEXT_POSITION, 40)
+            texo_cpu = get_text(str(self.points[1]), self.AI_TEXT_POSITION, 40)
 
             self.screen.blit(self.background_image, (0, 0))
             self.screen.blit(texo_jug[0], texo_jug[1])
             self.screen.blit(texo_cpu[0], texo_cpu[1])
-            self.screen.blit(self.Ball.image, self.Ball.rect)
+            self.screen.blit(self.game_ball.image, self.game_ball.rect)
             self.screen.blit(self.player_shovel.image, self.player_shovel.rect)
             self.screen.blit(self.ai_shovel.image, self.ai_shovel.rect)
+
             pygame.display.flip()
             if self.points[0] >= pointsToWin or self.points[1] >= pointsToWin:
                 break
@@ -200,28 +190,33 @@ class Game(pygame.sprite.Sprite):
         """Manage main menu."""
         win_image = get_image("img/menu.png")
         arrow1 = Arrow()
+        t1 = get_text(CONFIG["lang"]["text_play"], self.HALF_FROM_WIDTH, 200)
+        t2 = get_text(CONFIG["lang"]["text_exit"], self.HALF_FROM_WIDTH, 300)
+        if self.points[0] >= pointsToWin:
+            t3 = get_text(CONFIG["lang"]["text_win"], self.HALF_FROM_WIDTH, 100)
+        elif self.points[1] >= pointsToWin:
+            t3 = get_text(CONFIG["lang"]["text_lose"], self.HALF_FROM_WIDTH, 100)
+        else:
+            t3 = get_text(CONFIG["lang"]["text_welcome"], self.HALF_FROM_WIDTH, 100)
+        t4 = get_text("Player {0} - AI {1}".format(self.points[0], self.points[1]), self.HALF_FROM_WIDTH, 150)
+
         while True:
-            time = self.clock.tick(60)
+            self.clock.tick(60)
             keys = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sys.exit(0)
 
-            arrow_movement = arrow1.arrow_move(time, keys)
-            t1 = get_text(lang1[0], formWidth / 2, 200)
-            t2 = get_text(lang1[1], formWidth / 2, 300)
-            if self.points[0] >= pointsToWin:
-                t3 = get_text(lang1[2], formWidth / 2, 100)
-            elif self.points[1] >= pointsToWin:
-                t3 = get_text(lang1[3], formWidth / 2, 100)
-            else:
-                t3 = get_text(lang1[4], formWidth / 2, 100)
             self.screen.blit(win_image, (0, 0))
             self.screen.blit(t1[0], t1[1])
             self.screen.blit(t2[0], t2[1])
             self.screen.blit(t3[0], t3[1])
+            if self.points[0] == pointsToWin or self.points[1] == pointsToWin:
+                self.screen.blit(t4[0], t4[1])
             self.screen.blit(arrow1.image, arrow1.rect)
+
             pygame.display.flip()
+            arrow_movement = arrow1.arrow_move(keys)
             if arrow_movement == 1:
                 break
 
